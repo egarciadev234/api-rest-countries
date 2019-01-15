@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  db:
+      image: postgres:10.1
+      volumes:
+        - ./data:/var/lib/postgresql/data
+  web:
+      build: .
+      command: python /code/apirest/manage.py makemigrations
+      command: python /code/apirest/manage.py migrate --noinput
+      command: python /code/apirest/manage.py runserver 0.0.0.0:8000
+      volumes:
+        - .:/code
+      ports:
+        - "8000:8000"
+      depends_on:
+        - db
+      environment:
+        - DJANGO_SETTINGS_MODULE=apirest.settings
+        - SECRET_KEY=${SECRET_KEY}
